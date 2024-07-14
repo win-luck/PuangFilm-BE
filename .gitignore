@@ -1,0 +1,13 @@
+# yaml
+*.yaml
+
+# .idea
+.idea/*
+build/*
+.gradle/*
+
+# lock
+*.lock
+
+# bin
+*.bin
