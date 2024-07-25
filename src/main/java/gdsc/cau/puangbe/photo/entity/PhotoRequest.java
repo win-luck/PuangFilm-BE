@@ -1,5 +1,6 @@
 package gdsc.cau.puangbe.photo.entity;
 
+import gdsc.cau.puangbe.common.enums.Gender;
 import gdsc.cau.puangbe.common.enums.RequestStatus;
 import gdsc.cau.puangbe.user.entity.User;
 import jakarta.persistence.*;
@@ -31,6 +32,8 @@ public class PhotoRequest {
     private LocalDateTime createDate;
 
     private LocalDateTime updateDate;
+
+    private Gender gender;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.REMOVE)
     private List<PhotoOrigin> photoUrls = new ArrayList<>();

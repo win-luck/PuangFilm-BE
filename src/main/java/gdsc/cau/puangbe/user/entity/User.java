@@ -25,8 +25,6 @@ public class User {
 
     private LocalDateTime requestDate;
 
-    private Gender gender;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<PhotoResult> photoResult = new ArrayList<>();
 
