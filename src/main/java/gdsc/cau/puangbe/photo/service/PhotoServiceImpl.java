@@ -45,15 +45,15 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     public Void uploadPhoto(Long photoResultId,String imageUrl) {
         Optional<PhotoResult> photoResult = photoResultRepository.findById(photoResultId);
-        if(photoResult.isPresent()){
-            Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoResult.get().getPhotoRequest().getId());
-            if(photoRequest.isPresent()){
-                if (photoRequest.get().getStatus() == RequestStatus.FINISHED) {
-                    throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
-                }
-            }
-        } else {
+        if(!photoResult.isPresent()){
             throw new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND);
+        }
+
+        Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoResult.get().getPhotoRequest().getId());
+        if(photoRequest.isPresent()){
+            if (photoRequest.get().getStatus() == RequestStatus.FINISHED) {
+                throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
+            }
         }
 
         photoResult.get().update(imageUrl);
