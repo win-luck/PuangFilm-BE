@@ -26,7 +26,7 @@ public class PhotoController {
 
     @GetMapping("/{imageId}")
     public ApiResponse<String> getImage(Long photoRequestId) {
-        return ApiResponse.success(photoService.get(photoRequestId), ResponseCode.PHOTORESULT_URL_FOUND.getMessage());
+        return ApiResponse.success(photoService.getPhotoUrl(photoRequestId), ResponseCode.PHOTORESULT_URL_FOUND.getMessage());
     }
 
 }

@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PhotoServiceImpl implements PhotoService {
     private final PhotoResultRepository photoResultRepository;
     private final PhotoRequestRepository photoRequestRepository;
@@ -25,14 +25,12 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional
     public Long createPhoto(Long photoRequestId) {
-        Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoRequestId);
+        PhotoRequest photoRequest = photoRequestRepository.findById(photoRequestId)
+                .orElseThrow(() -> new BaseException(ResponseCode.BAD_REQUEST));
 
-        if(!photoRequest.isPresent()){
-            throw new BaseException(ResponseCode.BAD_REQUEST);
-        }
         PhotoResult photoResult = PhotoResult.builder()
-                .user(photoRequest.get().getUser())
-                .photoRequest(photoRequest.get())
+                .user(photoRequest.getUser())
+                .photoRequest(photoRequest)
                 .createDate(LocalDateTime.now())
                 .build();
 
@@ -44,31 +42,30 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional
     public Void uploadPhoto(Long photoResultId,String imageUrl) {
-        Optional<PhotoResult> photoResult = photoResultRepository.findById(photoResultId);
-        if(!photoResult.isPresent()){
-            throw new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND);
+        PhotoResult photoResult = photoResultRepository.findById(photoResultId)
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+
+        PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+
+        if (photoRequest.getStatus() == RequestStatus.FINISHED) {
+            throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
         }
 
-        Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoResult.get().getPhotoRequest().getId());
-        if(photoRequest.isPresent()){
-            if (photoRequest.get().getStatus() == RequestStatus.FINISHED) {
-                throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
-            }
-        }
-
-        photoResult.get().update(imageUrl);
+        photoResult.update(imageUrl);
+        photoResultRepository.save(photoResult);
 
         // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
 
         return null;
     }
 
-    public String get(Long photoRequestId) {
-        Optional<PhotoResult> photoResult = photoResultRepository.findByPhotoRequestId(photoRequestId);
-        if(!photoResult.isPresent()){
-            throw new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND);
-        }
-        return photoResult.get().getImageUrl();
+    @Override
+    @Transactional(readOnly = true)
+    public String getPhotoUrl(Long photoRequestId) {
+        PhotoResult photoResult = photoResultRepository.findByPhotoRequestId(photoRequestId)
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+        return photoResult.getImageUrl();
     }
 
 }
