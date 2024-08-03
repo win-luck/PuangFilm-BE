@@ -46,7 +46,7 @@ public class PhotoServiceImpl implements PhotoService {
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
 
         PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTOREQUEST_NOT_FOUND));
 
         if (photoRequest.getStatus() == RequestStatus.FINISHED) {
             throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);

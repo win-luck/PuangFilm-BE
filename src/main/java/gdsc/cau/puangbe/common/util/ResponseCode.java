@@ -20,6 +20,7 @@ public enum ResponseCode {
 
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
+    PHOTOREQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, false, "요청 객체를 찾을 수 없습니다."),
     PHOTORESULT_NOT_FOUND(HttpStatus.NOT_FOUND, false, "이미지 객체를 찾을 수 없습니다."),
 
     // 405 Method Not Allowed
