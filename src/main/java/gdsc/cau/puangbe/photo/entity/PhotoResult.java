@@ -30,10 +30,14 @@ public class PhotoResult {
     private String imageUrl; //s3에 저장된 AI결과 이미지 url
 
     @Builder
-    public PhotoResult(User user, PhotoRequest photoRequest, LocalDateTime createDate, String imageUrl){
+    public PhotoResult(User user, PhotoRequest photoRequest, LocalDateTime createDate){
         this.user = user;
         this.photoRequest = photoRequest;
         this.createDate = createDate;
+
+    }
+
+    public void update(String imageUrl){
         this.imageUrl = imageUrl;
     }
 }

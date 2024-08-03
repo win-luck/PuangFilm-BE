@@ -20,12 +20,14 @@ public enum ResponseCode {
 
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
+    PHOTORESULT_NOT_FOUND(HttpStatus.NOT_FOUND, false, "이미지 객체를 찾을 수 없습니다."),
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, false, "허용되지 않은 메서드입니다."),
 
     // 409 Conflict
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 존재하는 사용자입니다."),
+    URL_ALREADY_UPLOADED(HttpStatus.CONFLICT, false, "이미 Url이 업로드 되었습니다."),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
@@ -35,7 +37,8 @@ public enum ResponseCode {
 
     // 201 Created
     USER_CREATE_SUCCESS(HttpStatus.CREATED, true, "사용자 생성 성공"),
-    PHOTORESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공");
+    PHOTORESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공"),
+    PHOTORESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공");
 
     private final HttpStatus httpStatus;
     private final Boolean success;

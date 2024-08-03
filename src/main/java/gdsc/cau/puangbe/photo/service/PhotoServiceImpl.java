@@ -1,10 +1,11 @@
 package gdsc.cau.puangbe.photo.service;
 
+import gdsc.cau.puangbe.common.enums.RequestStatus;
 import gdsc.cau.puangbe.common.exception.BaseException;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photo.entity.PhotoRequest;
 import gdsc.cau.puangbe.photo.entity.PhotoResult;
-import gdsc.cau.puangbe.photo.repository.PhotoRepository;
+import gdsc.cau.puangbe.photo.repository.PhotoResultRepository;
 import gdsc.cau.puangbe.photo.repository.PhotoRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PhotoServiceImpl implements PhotoService {
-    private final PhotoRepository photoRepository;
+    private final PhotoResultRepository photoResultRepository;
     private final PhotoRequestRepository photoRequestRepository;
 
     @Override
@@ -33,11 +34,33 @@ public class PhotoServiceImpl implements PhotoService {
                     .createDate(LocalDateTime.now())
                     .build();
 
-            // TODO: photoRequest도 업데이트 (비지니스 로직 builder 패턴으로 할지 상의 후 추가 작성 - 다른 위치에)
+            // TODO: api호출 주체에서 photoRequest의 photoResult 부분도 업데이트
 
-           return photoRepository.save(photoResult).getId();
+           return photoResultRepository.save(photoResult).getId();
         } else {
             throw new BaseException(ResponseCode.BAD_REQUEST);
         }
+    }
+
+    @Override
+    @Transactional
+    public Void uploadPhoto(Long photoResultId,String imageUrl) {
+        Optional<PhotoResult> photoResult = photoResultRepository.findById(photoResultId);
+        if(photoResult.isPresent()){
+            Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoResult.get().getPhotoRequest().getId());
+            if(photoRequest.isPresent()){
+                if (photoRequest.get().getStatus() == RequestStatus.FINISHED) {
+                    throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
+                }
+            }
+        } else {
+            throw new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND);
+        }
+
+        photoResult.get().update(imageUrl);
+        
+        // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
+
+        return null;
     }
 }

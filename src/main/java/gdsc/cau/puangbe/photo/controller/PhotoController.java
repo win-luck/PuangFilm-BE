@@ -17,4 +17,9 @@ public class PhotoController {
         return ApiResponse.success(photoService.createPhoto(photoRequestId), ResponseCode.PHOTORESULT_CREATE_SUCCESS.getMessage());
     }
 
+    @PostMapping("/url")
+    public ApiResponse<Void> uploadImage(Long photoResultId, String imageUrl) {
+        return ApiResponse.success(photoService.uploadPhoto(photoResultId, imageUrl), ResponseCode.PHOTORESULT_URL_UPLOADED.getMessage());
+    }
+
 }
