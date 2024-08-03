@@ -22,4 +22,11 @@ public class PhotoController {
         return ApiResponse.success(photoService.uploadPhoto(photoResultId, imageUrl), ResponseCode.PHOTORESULT_URL_UPLOADED.getMessage());
     }
 
+    // TODO : 이메일 발송 관련 api 추가
+
+    @GetMapping("/{imageId}")
+    public ApiResponse<String> getImage(Long photoRequestId) {
+        return ApiResponse.success(photoService.get(photoRequestId), ResponseCode.PHOTORESULT_URL_FOUND.getMessage());
+    }
+
 }

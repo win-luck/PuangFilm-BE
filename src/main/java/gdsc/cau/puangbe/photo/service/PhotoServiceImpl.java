@@ -58,9 +58,18 @@ public class PhotoServiceImpl implements PhotoService {
         }
 
         photoResult.get().update(imageUrl);
-        
+
         // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
 
         return null;
     }
+
+    public String get(Long photoRequestId) {
+        Optional<PhotoResult> photoResult = photoResultRepository.findByPhotoRequestId(photoRequestId);
+        if(!photoResult.isPresent()){
+            throw new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND);
+        }
+        return photoResult.get().getImageUrl();
+    }
+
 }
