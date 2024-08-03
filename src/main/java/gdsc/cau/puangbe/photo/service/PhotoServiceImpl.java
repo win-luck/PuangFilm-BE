@@ -27,19 +27,18 @@ public class PhotoServiceImpl implements PhotoService {
     public Long createPhoto(Long photoRequestId) {
         Optional<PhotoRequest> photoRequest = photoRequestRepository.findById(photoRequestId);
 
-        if(photoRequest.isPresent()){
-            PhotoResult photoResult = PhotoResult.builder()
-                    .user(photoRequest.get().getUser())
-                    .photoRequest(photoRequest.get())
-                    .createDate(LocalDateTime.now())
-                    .build();
-
-            // TODO: api호출 주체에서 photoRequest의 photoResult 부분도 업데이트
-
-           return photoResultRepository.save(photoResult).getId();
-        } else {
+        if(!photoRequest.isPresent()){
             throw new BaseException(ResponseCode.BAD_REQUEST);
         }
+        PhotoResult photoResult = PhotoResult.builder()
+                .user(photoRequest.get().getUser())
+                .photoRequest(photoRequest.get())
+                .createDate(LocalDateTime.now())
+                .build();
+
+        // TODO: api호출 주체에서 photoRequest의 photoResult 부분도 업데이트
+
+        return photoResultRepository.save(photoResult).getId();
     }
 
     @Override
