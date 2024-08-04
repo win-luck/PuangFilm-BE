@@ -35,10 +35,13 @@ public enum ResponseCode {
 
     // 200 OK
     PHOTO_RESULT_URL_FOUND(HttpStatus.OK, true, "image url 조회 성공"),
+    PHOTO_STATUS_FOUND(HttpStatus.OK, true, "resultImage 상태 조회 성공"),
+    PHOTO_LIST_FOUND(HttpStatus.OK, true, "resultImage List 조회 성공"),
 
 
     // 201 Created
     USER_CREATE_SUCCESS(HttpStatus.CREATED, true, "사용자 생성 성공"),
+    PHOTO_REQUEST_CREATE_SUCCESS(HttpStatus.CREATED, true, "사진 요청 생성 성공"),
     PHOTO_RESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공"),
     PHOTO_RESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공");
 
