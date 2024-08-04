@@ -54,12 +54,12 @@ public class PhotoRequest {
         this.updateDate = LocalDateTime.now();
     }
 
-    void processStatus(){
+    public void processStatus(){
         this.status = RequestStatus.PROCESSING;
         this.updateDate = LocalDateTime.now();
     }
 
-    void finishStatus() {
+    public void finishStatus() {
         this.status = RequestStatus.FINISHED;
         this.updateDate = LocalDateTime.now();
     }
