@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
@@ -95,7 +94,7 @@ class PhotoControllerTest {
     void uploadImage404Test() throws Exception {
         // given
         UploadImageDto uploadImageDto = new UploadImageDto(1L, "imageUrl");
-        when(photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl())).thenThrow(new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
+        doThrow(new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND)).when(photoService).uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.PHOTO_RESULT_NOT_FOUND));
 
         // when & then
@@ -111,7 +110,7 @@ class PhotoControllerTest {
     void uploadImage409Test() throws Exception {
         // given
         UploadImageDto uploadImageDto = new UploadImageDto(1L, "imageUrl");
-        when(photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl())).thenThrow(new BaseException(ResponseCode.URL_ALREADY_UPLOADED));
+        doThrow(new BaseException(ResponseCode.URL_ALREADY_UPLOADED)).when(photoService).uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.URL_ALREADY_UPLOADED));
 
         // when & then
