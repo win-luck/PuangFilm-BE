@@ -44,7 +44,7 @@ public class PhotoRequestController {
 
     // 최근 생성 요청한 이미지 상태 조회
     @Tag(name = "photo-request")
-    @Operation(summary = "최근 생성 요청한 이미지 상태 조회", description = "최근 생성 요청한 이미지 상태를 조회��다.", responses = {
+    @Operation(summary = "최근 생성 요청한 이미지 상태 조회", description = "최근 생성 요청한 이미지 상태를 조회한다.", responses = {
             @ApiResponse(responseCode = "200", description = "최근 생성 요청한 이미지 상태 조회 성공"),
             @ApiResponse(responseCode = "404", description = "유저의 최근 요청을 찾지 못했을 때")
     })
