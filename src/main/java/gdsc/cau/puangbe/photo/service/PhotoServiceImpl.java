@@ -40,7 +40,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     @Transactional
-    public Void uploadPhoto(Long photoResultId,String imageUrl) {
+    public void uploadPhoto(Long photoResultId,String imageUrl) {
         PhotoResult photoResult = checkPhotoResult(photoResultId);
 
         PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
@@ -55,7 +55,6 @@ public class PhotoServiceImpl implements PhotoService {
 
         // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
         // TODO : 이메일 발송까지 여기서 수행해야함
-        return null;
     }
 
     @Override

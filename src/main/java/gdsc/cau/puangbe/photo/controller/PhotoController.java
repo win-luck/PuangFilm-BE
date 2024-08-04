@@ -35,7 +35,8 @@ public class PhotoController {
     })
     @PostMapping("/url")
     public APIResponse<Void> uploadImage(@RequestBody UploadImageDto uploadImageDto) {
-        return APIResponse.success(photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl()), ResponseCode.PHOTO_RESULT_URL_UPLOADED.getMessage());
+        photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
+        return APIResponse.success(null, ResponseCode.PHOTO_RESULT_URL_UPLOADED.getMessage());
     }
 
     // TODO : 이메일 발송 관련 api 추가
