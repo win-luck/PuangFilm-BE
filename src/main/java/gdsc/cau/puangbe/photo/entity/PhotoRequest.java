@@ -17,7 +17,7 @@ public class PhotoRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
