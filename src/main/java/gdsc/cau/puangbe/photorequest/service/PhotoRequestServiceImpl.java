@@ -32,7 +32,11 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
     @Transactional
     public void createImage(CreateImageDto dto, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
-        PhotoRequest request = new PhotoRequest(user, Gender.fromInt(dto.getGender()), dto.getPhotoOriginUrls());
+        PhotoRequest request = PhotoRequest.builder()
+                .user(user)
+                .gender(Gender.fromInt(dto.getGender()))
+                .urls(dto.getPhotoOriginUrls())
+                .build();
         Long requestId = photoRequestRepository.save(request).getId();
 
         ImageInfo imageInfo = new ImageInfo(dto.getPhotoOriginUrls(), Gender.fromInt(dto.getGender()), requestId);
@@ -64,7 +68,6 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
         RequestStatus status = photoRequestRepository.findTopByUserIdOrderByCreateDateDesc(userId)
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND))
                 .getStatus();
-
         return status.name();
     }
 
