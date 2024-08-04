@@ -25,7 +25,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     public Long createPhoto(Long photoRequestId) {
         PhotoRequest photoRequest = photoRequestRepository.findById(photoRequestId)
-                .orElseThrow(() -> new BaseException(ResponseCode.BAD_REQUEST));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
 
         PhotoResult photoResult = PhotoResult.builder()
                 .user(photoRequest.getUser())
@@ -54,7 +54,7 @@ public class PhotoServiceImpl implements PhotoService {
         photoResultRepository.save(photoResult);
 
         // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
-
+        // TODO : 이메일 발송까지 여기서 수행해야함
         return null;
     }
 
