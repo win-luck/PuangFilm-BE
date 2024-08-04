@@ -1,7 +1,9 @@
 package gdsc.cau.puangbe.photo.entity;
 
 import gdsc.cau.puangbe.user.entity.User;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +30,7 @@ public class PhotoResult {
 
     private LocalDateTime createDate;
 
+    @Nullable
     private String imageUrl; //s3에 저장된 AI결과 이미지 url
 
     @Builder
@@ -35,7 +38,6 @@ public class PhotoResult {
         this.user = user;
         this.photoRequest = photoRequest;
         this.createDate = createDate;
-
     }
 
     public void update(String imageUrl){

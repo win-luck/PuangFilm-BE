@@ -20,8 +20,8 @@ public enum ResponseCode {
 
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
-    PHOTOREQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, false, "요청 객체를 찾을 수 없습니다."),
-    PHOTORESULT_NOT_FOUND(HttpStatus.NOT_FOUND, false, "이미지 객체를 찾을 수 없습니다."),
+    PHOTO_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, false, "요청 객체를 찾을 수 없습니다."),
+    PHOTO_RESULT_NOT_FOUND(HttpStatus.NOT_FOUND, false, "이미지 객체를 찾을 수 없습니다."),
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, false, "허용되지 않은 메서드입니다."),
@@ -34,13 +34,16 @@ public enum ResponseCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
 
     // 200 OK
-    PHOTORESULT_URL_FOUND(HttpStatus.OK, true, "image url 조회 성공"),
+    PHOTO_RESULT_URL_FOUND(HttpStatus.OK, true, "image url 조회 성공"),
+    PHOTO_STATUS_FOUND(HttpStatus.OK, true, "resultImage 상태 조회 성공"),
+    PHOTO_LIST_FOUND(HttpStatus.OK, true, "resultImage List 조회 성공"),
 
 
     // 201 Created
     USER_CREATE_SUCCESS(HttpStatus.CREATED, true, "사용자 생성 성공"),
-    PHOTORESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공"),
-    PHOTORESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공");
+    PHOTO_REQUEST_CREATE_SUCCESS(HttpStatus.CREATED, true, "사진 요청 생성 성공"),
+    PHOTO_RESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공"),
+    PHOTO_RESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공");
 
     private final HttpStatus httpStatus;
     private final Boolean success;

@@ -1,9 +1,12 @@
 package gdsc.cau.puangbe.photo.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PhotoOrigin {
 
@@ -14,4 +17,8 @@ public class PhotoOrigin {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private PhotoRequest request;
+
+    public PhotoOrigin(String url) {
+        this.id = url;
+    }
 }
