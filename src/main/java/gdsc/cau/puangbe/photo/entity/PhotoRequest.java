@@ -27,7 +27,7 @@ public class PhotoRequest {
     @JoinColumn(name = "result_id")
     private PhotoResult photoResult;
 
-    private RequestStatus status = RequestStatus.WAITING;
+    private RequestStatus status;
 
     private LocalDateTime createDate;
 
