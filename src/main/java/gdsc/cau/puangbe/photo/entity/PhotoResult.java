@@ -2,12 +2,15 @@ package gdsc.cau.puangbe.photo.entity;
 
 import gdsc.cau.puangbe.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PhotoResult {
 
     @Id
@@ -26,4 +29,16 @@ public class PhotoResult {
     private LocalDateTime createDate;
 
     private String imageUrl; //s3에 저장된 AI결과 이미지 url
+
+    @Builder
+    public PhotoResult(User user, PhotoRequest photoRequest, LocalDateTime createDate){
+        this.user = user;
+        this.photoRequest = photoRequest;
+        this.createDate = createDate;
+
+    }
+
+    public void update(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
 }
