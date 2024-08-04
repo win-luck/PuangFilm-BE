@@ -1,6 +1,5 @@
-package gdsc.cau.puangbe.user;
+package gdsc.cau.puangbe.common.exception;
 
-import gdsc.cau.puangbe.common.exception.BaseException;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 
 public class UserException extends BaseException {
