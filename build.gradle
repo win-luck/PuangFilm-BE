@@ -40,6 +40,9 @@ dependencies {
 
 	// s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// mockito
+	testImplementation 'org.mockito:mockito-core:3.12.4'
 }
 
 tasks.named('test') {
