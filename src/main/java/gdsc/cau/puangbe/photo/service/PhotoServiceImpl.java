@@ -41,8 +41,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional
     public Void uploadPhoto(Long photoResultId,String imageUrl) {
-        PhotoResult photoResult = photoResultRepository.findById(photoResultId)
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
+        PhotoResult photoResult = checkPhotoResult(photoResultId);
 
         PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
@@ -62,9 +61,14 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional(readOnly = true)
     public String getPhotoUrl(Long photoRequestId) {
-        PhotoResult photoResult = photoResultRepository.findByPhotoRequestId(photoRequestId)
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
+        PhotoResult photoResult = checkPhotoResult(photoRequestId);
+
         return photoResult.getImageUrl();
+    }
+
+    private PhotoResult checkPhotoResult(Long photoRequestId){
+        return photoResultRepository.findByPhotoRequestId(photoRequestId)
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
     }
 
 }
