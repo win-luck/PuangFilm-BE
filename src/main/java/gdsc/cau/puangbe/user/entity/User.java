@@ -1,4 +1,5 @@
 package gdsc.cau.puangbe.user.entity;
+
 import gdsc.cau.puangbe.photo.entity.PhotoRequest;
 import gdsc.cau.puangbe.photo.entity.PhotoResult;
 import jakarta.persistence.*;
