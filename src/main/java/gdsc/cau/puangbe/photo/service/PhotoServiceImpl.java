@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +42,10 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     public Void uploadPhoto(Long photoResultId,String imageUrl) {
         PhotoResult photoResult = photoResultRepository.findById(photoResultId)
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
 
         PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTOREQUEST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
 
         if (photoRequest.getStatus() == RequestStatus.FINISHED) {
             throw new BaseException(ResponseCode.URL_ALREADY_UPLOADED);
@@ -64,7 +63,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional(readOnly = true)
     public String getPhotoUrl(Long photoRequestId) {
         PhotoResult photoResult = photoResultRepository.findByPhotoRequestId(photoRequestId)
-                .orElseThrow(() -> new BaseException(ResponseCode.PHOTORESULT_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
         return photoResult.getImageUrl();
     }
 
