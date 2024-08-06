@@ -83,10 +83,21 @@ public class AuthServiceImpl implements AuthService {
 
         Long refreshTokenId = jwtProvider.getRefreshIdFromExpiredToken(accessToken);
 
-        Token refreshToken = tokenRepository.findById(refreshTokenId)
+        Token refreshTokenRecord = tokenRepository.findById(refreshTokenId)
                 .orElseThrow(() -> new AuthException(ResponseCode.UNAUTHORIZED));
 
-        String newAccessToken = jwtProvider.reissueAccessToken(refreshToken.getRefreshToken(), refreshToken.getId());
+        if (!refreshTokenRecord.getExpiresAt().isAfter(LocalDateTime.now())) {
+            tokenRepository.delete(refreshTokenRecord);
+            throw new AuthException(ResponseCode.UNAUTHORIZED);
+        }
+
+        String refreshToken = refreshTokenRecord.getRefreshToken();
+        String newRefreshToken = jwtProvider.createRefreshToken(refreshTokenRecord.getKakaoId(), jwtProvider.getUserNameFromRefreshToken(refreshToken));
+
+        refreshTokenRecord.update(newRefreshToken, jwtProvider.getExpirationFromToken(newRefreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        tokenRepository.save(refreshTokenRecord);
+
+        String newAccessToken = jwtProvider.createAccessToken(refreshTokenRecord.getKakaoId(), refreshTokenId);
 
         return new ReissueResponse(newAccessToken);
     }

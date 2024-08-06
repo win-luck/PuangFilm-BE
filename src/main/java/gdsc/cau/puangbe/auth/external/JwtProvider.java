@@ -128,11 +128,6 @@ public class JwtProvider implements InitializingBean {
         }
     }
 
-    public String reissueAccessToken(String refreshToken, Long refreshId) {
-        validateToken(refreshToken);
-        return createAccessToken(getKakaoIdFromToken(refreshToken), refreshId);
-    }
-
     public String getTokenFromAuthorizationHeader(String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
