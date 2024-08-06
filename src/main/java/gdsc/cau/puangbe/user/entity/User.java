@@ -1,4 +1,5 @@
 package gdsc.cau.puangbe.user.entity;
+
 import gdsc.cau.puangbe.photo.entity.PhotoRequest;
 import gdsc.cau.puangbe.photo.entity.PhotoResult;
 import jakarta.persistence.*;
@@ -23,10 +24,13 @@ public class User {
 
     private String userName;
 
+    private String email;
+
     private LocalDateTime createDate;
 
     private LocalDateTime requestDate;
 
+    @Column(unique = true, nullable = false)
     private String kakaoId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
@@ -36,14 +40,11 @@ public class User {
     private List<PhotoRequest> photoRequest = new ArrayList<>();
 
     @Builder
-    public User(String userName, LocalDateTime createDate, LocalDateTime requestDate, String kakaoId){
+    public User(String userName, LocalDateTime createDate, LocalDateTime requestDate, String kakaoId, String email) {
         this.userName = userName;
         this.createDate = createDate;
         this.requestDate = requestDate;
         this.kakaoId = kakaoId;
-    }
-
-    public void updateRequestDate(LocalDateTime requestDate){
-        this.requestDate = requestDate;
+        this.email = email;
     }
 }
