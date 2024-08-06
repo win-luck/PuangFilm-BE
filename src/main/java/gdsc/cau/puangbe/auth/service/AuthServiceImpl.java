@@ -15,6 +15,7 @@ import gdsc.cau.puangbe.user.repository.UserRepository;
 import gdsc.cau.puangbe.user.entity.User;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -100,5 +101,11 @@ public class AuthServiceImpl implements AuthService {
         String newAccessToken = jwtProvider.createAccessToken(refreshTokenRecord.getKakaoId(), refreshTokenId);
 
         return new ReissueResponse(newAccessToken);
+    }
+
+    @Override
+    @Scheduled(cron = "0 5 5 * * ?") // 매일 새벽 5시 5분
+    public void deleteExpiredRefreshTokens() {
+        tokenRepository.deleteAllByExpiresAtBefore(LocalDateTime.now());
     }
 }

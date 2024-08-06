@@ -7,4 +7,5 @@ public interface AuthService {
     LoginResponse loginWithKakao(String code);
 
     ReissueResponse reissue(String authorizationHeader);
+    void deleteExpiredRefreshTokens();
 }
