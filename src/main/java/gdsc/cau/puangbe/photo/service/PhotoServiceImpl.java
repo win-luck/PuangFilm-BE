@@ -53,11 +53,11 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional(readOnly = true)
     public String getPhotoUrl(Long photoRequestId) {
-        if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(ConstantUtil.USER_ID_KEY, photoRequestId))) {
+        PhotoResult photoResult = getPhotoResult(photoRequestId);
+        if(photoResult.getImageUrl() == null){
             throw new BaseException(ResponseCode.IMAGE_ON_PROCESS);
         }
 
-        PhotoResult photoResult = getPhotoResult(photoRequestId);
         return photoResult.getImageUrl();
     }
 
