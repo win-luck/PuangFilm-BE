@@ -104,6 +104,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public Boolean validateToken(String authorizationHeader) {
+        String accessToken = jwtProvider.getTokenFromAuthorizationHeader(authorizationHeader);
+        try {
+            jwtProvider.validateToken(accessToken);
+        } catch (AuthException e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     @Scheduled(cron = "0 5 5 * * ?") // 매일 새벽 5시 5분
     public void deleteExpiredRefreshTokens() {
         tokenRepository.deleteAllByExpiresAtBefore(LocalDateTime.now());

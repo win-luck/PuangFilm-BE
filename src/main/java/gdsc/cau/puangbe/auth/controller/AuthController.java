@@ -27,4 +27,9 @@ public class AuthController {
     public APIResponse<ReissueResponse> reissue(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         return APIResponse.success(authService.reissue(authorizationHeader), ResponseCode.USER_TOKEN_REISSUE_SUCCESS.getMessage());
     }
+
+    @GetMapping("/validate")
+    public APIResponse<Boolean> validateToken(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        return APIResponse.success(authService.validateToken(authorizationHeader), ResponseCode.USER_TOKEN_VALIDATE_SUCCESS.getMessage());
+    }
 }

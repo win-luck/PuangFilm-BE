@@ -37,6 +37,7 @@ public enum ResponseCode {
     // 200 OK
     USER_LOGIN_SUCCESS(HttpStatus.OK, true, "사용자 로그인 성공"),
     USER_TOKEN_REISSUE_SUCCESS(HttpStatus.OK, true, "사용자 토큰 재발급 성공"),
+    USER_TOKEN_VALIDATE_SUCCESS(HttpStatus.OK, true, "사용자 토큰 검증 성공"),
     PHOTO_RESULT_URL_FOUND(HttpStatus.OK, true, "image url 조회 성공"),
     PHOTO_STATUS_FOUND(HttpStatus.OK, true, "resultImage 상태 조회 성공"),
     PHOTO_LIST_FOUND(HttpStatus.OK, true, "resultImage List 조회 성공"),

@@ -8,4 +8,6 @@ public interface AuthService {
 
     ReissueResponse reissue(String authorizationHeader);
     void deleteExpiredRefreshTokens();
+
+    Boolean validateToken(String authorizationHeader);
 }
