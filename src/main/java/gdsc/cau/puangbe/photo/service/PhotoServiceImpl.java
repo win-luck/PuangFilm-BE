@@ -25,7 +25,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     public Long createPhoto(Long photoRequestId) {
         PhotoRequest photoRequest = photoRequestRepository.findById(photoRequestId)
-                .orElseThrow(() -> new BaseException(ResponseCode.BAD_REQUEST));
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
 
         PhotoResult photoResult = PhotoResult.builder()
                 .user(photoRequest.getUser())
@@ -40,8 +40,8 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     @Transactional
-    public Void uploadPhoto(Long photoResultId,String imageUrl) {
-        PhotoResult photoResult = checkPhotoResult(photoResultId);
+    public void uploadPhoto(Long photoRequestId, String imageUrl) {
+        PhotoResult photoResult = getPhotoResult(photoRequestId);
 
         PhotoRequest photoRequest = photoRequestRepository.findById(photoResult.getPhotoRequest().getId())
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
@@ -54,21 +54,19 @@ public class PhotoServiceImpl implements PhotoService {
         photoResultRepository.save(photoResult);
 
         // TODO : url 업로드 하고 PhotoRequest의 status 업데이트 (어느 메서드에서 할지 논의)
-
-        return null;
+        // TODO : 이메일 발송까지 여기서 수행해야함
     }
 
     @Override
     @Transactional(readOnly = true)
     public String getPhotoUrl(Long photoRequestId) {
-        PhotoResult photoResult = checkPhotoResult(photoRequestId);
+        PhotoResult photoResult = getPhotoResult(photoRequestId);
 
         return photoResult.getImageUrl();
     }
 
-    private PhotoResult checkPhotoResult(Long photoRequestId){
+    private PhotoResult getPhotoResult(Long photoRequestId){
         return photoResultRepository.findByPhotoRequestId(photoRequestId)
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
     }
-
 }

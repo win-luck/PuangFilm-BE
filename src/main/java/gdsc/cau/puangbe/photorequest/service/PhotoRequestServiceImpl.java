@@ -10,7 +10,6 @@ import gdsc.cau.puangbe.photo.repository.PhotoRequestRepository;
 import gdsc.cau.puangbe.photo.repository.PhotoResultRepository;
 import gdsc.cau.puangbe.photorequest.dto.CreateImageDto;
 import gdsc.cau.puangbe.photorequest.dto.ImageInfo;
-import gdsc.cau.puangbe.photorequest.dto.ResponseResultDto;
 import gdsc.cau.puangbe.user.entity.User;
 import gdsc.cau.puangbe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,11 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
     @Transactional
     public void createImage(CreateImageDto dto, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
-        PhotoRequest request = new PhotoRequest(user, Gender.fromInt(dto.getGender()), dto.getPhotoOriginUrls());
+        PhotoRequest request = PhotoRequest.builder()
+                .user(user)
+                .gender(Gender.fromInt(dto.getGender()))
+                .urls(dto.getPhotoOriginUrls())
+                .build();
         Long requestId = photoRequestRepository.save(request).getId();
 
         ImageInfo imageInfo = new ImageInfo(dto.getPhotoOriginUrls(), Gender.fromInt(dto.getGender()), requestId);
@@ -47,17 +50,14 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
     // 유저의 전체 사진 리스트 조회
     @Override
     @Transactional(readOnly = true)
-    public ResponseResultDto getRequestImages(Long userId){
+    public List<String> getRequestImages(Long userId){
         validateUser(userId);
 
-        List<String> results = photoResultRepository.findAllByUserId(userId)
+        return photoResultRepository.findAllByUserId(userId)
                 .stream()
                 .map(PhotoResult::getImageUrl)
                 .toList();
-
-        return new ResponseResultDto(results);
     }
-
 
     //최근 생성 요청한 이미지의 상태 조회 (추후 boolean 등으로 변환될 수도 있음)
     @Override
@@ -66,9 +66,8 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
         validateUser(userId);
 
         RequestStatus status = photoRequestRepository.findTopByUserIdOrderByCreateDateDesc(userId)
-                .orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND))
+                .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND))
                 .getStatus();
-
         return status.name();
     }
 
