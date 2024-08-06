@@ -2,6 +2,7 @@ package gdsc.cau.puangbe.photorequest.dto;
 
 import gdsc.cau.puangbe.common.enums.Gender;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ImageInfo {
 
     List<String> photoOriginUrls;
