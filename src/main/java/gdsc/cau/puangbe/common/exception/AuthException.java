@@ -4,7 +4,7 @@ import gdsc.cau.puangbe.common.util.ResponseCode;
 
 public class AuthException extends BaseException {
 
-  public AuthException(ResponseCode responseCode) {
-    super(responseCode);
-  }
+    public AuthException(ResponseCode responseCode) {
+        super(responseCode);
+    }
 }

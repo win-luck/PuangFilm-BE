@@ -8,15 +8,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class KakaoJWK {
-  private String kid;
+    private String kid;
 
-  private String kty;
+    private String kty;
 
-  private String alg;
+    private String alg;
 
-  private String use;
+    private String use;
 
-  private String n;
+    private String n;
 
-  private String e;
+    private String e;
 }

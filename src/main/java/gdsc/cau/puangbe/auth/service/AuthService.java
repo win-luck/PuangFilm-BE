@@ -4,6 +4,7 @@ import gdsc.cau.puangbe.auth.dto.LoginResponse;
 import gdsc.cau.puangbe.auth.dto.ReissueResponse;
 
 public interface AuthService {
-  LoginResponse loginWithKakao(String code);
-  ReissueResponse reissue(String authorizationHeader);
+    LoginResponse loginWithKakao(String code);
+
+    ReissueResponse reissue(String authorizationHeader);
 }

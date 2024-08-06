@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ReissueResponse {
-  private String accessToken;
+    private String accessToken;
 }

@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthPayload {
-  private String aud;
-  private String sub;
-  private String iss;
-  private Long exp;
-  private String nickname;
+    private String aud;
+    private String sub;
+    private String iss;
+    private Long exp;
+    private String nickname;
 }

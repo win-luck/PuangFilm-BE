@@ -1,13 +1,14 @@
 package gdsc.cau.puangbe.auth.dto;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class KakaoIdTokenPublicKey {
-  private List<KakaoJWK> keys;
+    private List<KakaoJWK> keys;
 }

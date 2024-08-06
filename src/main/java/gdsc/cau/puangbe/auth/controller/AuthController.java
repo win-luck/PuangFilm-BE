@@ -20,11 +20,11 @@ public class AuthController {
 
     @GetMapping("/login/oauth/kakao")
     public APIResponse<LoginResponse> loginWithKakao(@RequestParam("code") String code) {
-      return APIResponse.success(authService.loginWithKakao(code), ResponseCode.USER_LOGIN_SUCCESS.getMessage());
+        return APIResponse.success(authService.loginWithKakao(code), ResponseCode.USER_LOGIN_SUCCESS.getMessage());
     }
 
     @GetMapping("/reissue")
     public APIResponse<ReissueResponse> reissue(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
-      return APIResponse.success(authService.reissue(authorizationHeader), ResponseCode.USER_TOKEN_REISSUE_SUCCESS.getMessage());
+        return APIResponse.success(authService.reissue(authorizationHeader), ResponseCode.USER_TOKEN_REISSUE_SUCCESS.getMessage());
     }
 }
