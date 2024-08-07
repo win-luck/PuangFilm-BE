@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OAuthTokenResponse {
+public class KakaoToken {
     @JsonProperty("token_type")
     private String tokenType;
 

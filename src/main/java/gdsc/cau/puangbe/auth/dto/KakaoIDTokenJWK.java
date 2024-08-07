@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class KakaoJWK {
+public class KakaoIDTokenJWK {
     private String kid;
 
     private String kty;

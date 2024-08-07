@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class KakaoIdTokenPublicKey {
-    private List<KakaoJWK> keys;
+public class KakaoIDTokenPublicKeyList {
+    private List<KakaoIDTokenJWK> keys;
 }

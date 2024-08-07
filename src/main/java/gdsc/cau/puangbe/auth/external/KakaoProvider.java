@@ -1,8 +1,8 @@
 package gdsc.cau.puangbe.auth.external;
 
 import gdsc.cau.puangbe.auth.config.KakaoLoginProperties;
-import gdsc.cau.puangbe.auth.dto.KakaoIdTokenPublicKey;
-import gdsc.cau.puangbe.auth.dto.OAuthTokenResponse;
+import gdsc.cau.puangbe.auth.dto.KakaoIDTokenPublicKeyList;
+import gdsc.cau.puangbe.auth.dto.KakaoToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class KakaoProvider {
     private final KakaoLoginProperties kakaoLoginProperties;
 
-    public OAuthTokenResponse getTokenByCode(String code) {
+    // 카카오 인가 코드로 카카오 토큰 발급
+    public KakaoToken getTokenByCode(String code) {
         return WebClient.create()
                 .post()
                 .uri(kakaoLoginProperties.getTokenUri())
@@ -31,25 +32,27 @@ public class KakaoProvider {
                         .with("code", code)
                         .with("client_secret", kakaoLoginProperties.getClientSecret()))
                 .retrieve()
-                .bodyToMono(OAuthTokenResponse.class)
+                .bodyToMono(KakaoToken.class)
                 .block();
     }
 
+    // 카카오 인증 서버로부터 카카오 ID 토큰 공개키 목록 조회하여 캐싱
     @Cacheable(key = "'all'")
-    public KakaoIdTokenPublicKey getOIDCPublicKeyList() {
+    public KakaoIDTokenPublicKeyList getOIDCPublicKeyList() {
         return WebClient.create()
                 .get()
                 .uri(kakaoLoginProperties.getPublicKeyUri())
                 .retrieve()
-                .bodyToMono(KakaoIdTokenPublicKey.class)
+                .bodyToMono(KakaoIDTokenPublicKeyList.class)
                 .block();
     }
 
-    public KakaoIdTokenPublicKey getUpdatedOIDCPublicKeyList() {
+    // 카카오 인증 서버로부터 카카오 ID 토큰 공개키 목록 재조회하여 캐싱
+    public KakaoIDTokenPublicKeyList getUpdatedOIDCPublicKeyList() {
         return getOIDCPublicKeyList();
     }
 
-    // 매일 새벽 5시에 실행
+    // 매일 새벽 5시에 카카오 인증 서버로부터 카카오 ID 토큰 공개키 목록 재조회하여 캐싱
     @Scheduled(cron = "0 0 5 * * ?") // 초 분 시 일 월 요일 (연도)
     public void updateKakaoPublicKeyListCache() {
         getOIDCPublicKeyList();

@@ -90,7 +90,7 @@ public class JwtProvider implements InitializingBean {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("userName", String.class); // 토큰에 해당하는 사용자의 kakao_id
+                .get("userName", String.class); // 토큰에 해당하는 사용자의 username
     }
 
     public Date getExpirationFromToken(String token) {

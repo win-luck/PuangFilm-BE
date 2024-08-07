@@ -1,7 +1,7 @@
 package gdsc.cau.puangbe.auth.service;
 
-import gdsc.cau.puangbe.auth.dto.AuthPayload;
-import gdsc.cau.puangbe.auth.dto.OAuthTokenResponse;
+import gdsc.cau.puangbe.auth.dto.KakaoIDTokenPayload;
+import gdsc.cau.puangbe.auth.dto.KakaoToken;
 import gdsc.cau.puangbe.auth.dto.LoginResponse;
 import gdsc.cau.puangbe.auth.dto.ReissueResponse;
 import gdsc.cau.puangbe.auth.entity.Token;
@@ -35,23 +35,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse loginWithKakao(String code) {
-        // 카카오로부터 토큰 발급
-        OAuthTokenResponse kakaoToken = kakaoProvider.getTokenByCode(code);
+        // 카카오 토큰 발급
+        KakaoToken kakaoToken = kakaoProvider.getTokenByCode(code);
 
-        // ID 토큰 유효성 검증
-        AuthPayload authPayload;
+        // 카카오 ID 토큰 유효성 검증
+        KakaoIDTokenPayload kakaoIDTokenPayload;
         try {
-            authPayload = OIDCProvider.verify(kakaoToken.getIdToken(), ISS, kakaoProvider.getOIDCPublicKeyList());
+            kakaoIDTokenPayload = OIDCProvider.verify(kakaoToken.getIdToken(), ISS, kakaoProvider.getOIDCPublicKeyList());
         } catch (SignatureException e) {
-            authPayload = OIDCProvider.verify(kakaoToken.getIdToken(), ISS, kakaoProvider.getUpdatedOIDCPublicKeyList());
+            kakaoIDTokenPayload = OIDCProvider.verify(kakaoToken.getIdToken(), ISS, kakaoProvider.getUpdatedOIDCPublicKeyList());
         }
 
-        final String kakaoId = authPayload.getSub();
-        final String userName = authPayload.getNickname();
+        final String kakaoId = kakaoIDTokenPayload.getSub();
+        final String userName = kakaoIDTokenPayload.getNickname();
 
-        // JWT 토큰 발행 및 DB 업데이트 (가입 완료 or 로그인)
-        String refreshTokenString = jwtProvider.createRefreshToken(kakaoId, userName);
-
+        // DB User 테이블 갱신
+        // 기존 회원: UPDATE request_date
+        // 신규 회원: INSERT
         userRepository.findByKakaoId(kakaoId)
                 .map(u -> {
                     u.updateRequestDate(LocalDateTime.now());
@@ -65,39 +65,51 @@ public class AuthServiceImpl implements AuthService {
                         .build()
                 ));
 
-        Token refreshToken = Token.builder()
-                .refreshToken(refreshTokenString)
-                .kakaoId(kakaoId)
-                .expiresAt(jwtProvider.getExpirationFromToken(refreshTokenString).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-                .build();
-        Token savedRefreshToken = tokenRepository.save(refreshToken);
-        System.out.println(savedRefreshToken.getId());
+        // refresh_token 발행
+        String refreshToken = jwtProvider.createRefreshToken(kakaoId, userName);
 
-        String accessToken = jwtProvider.createAccessToken(authPayload.getSub(), savedRefreshToken.getId());
+        // DB Token 테이블 갱신
+        Token refreshTokenRecord = tokenRepository.save(Token.builder()
+                .refreshToken(refreshToken)
+                .kakaoId(kakaoId)
+                .expiresAt(jwtProvider.getExpirationFromToken(refreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                .build()
+        );
+
+        // access_token 발행
+        String accessToken = jwtProvider.createAccessToken(kakaoId, refreshTokenRecord.getId());
 
         return new LoginResponse(accessToken);
     }
 
     @Override
     public ReissueResponse reissue(String authorizationHeader) {
+        // Header로부터 access_token 추출
         String accessToken = jwtProvider.getTokenFromAuthorizationHeader(authorizationHeader);
 
+        // access_token으로부터 refreshId 추출 (DB Token 테이블의 ID)
         Long refreshTokenId = jwtProvider.getRefreshIdFromExpiredToken(accessToken);
 
+        // refresh_token 조회
         Token refreshTokenRecord = tokenRepository.findById(refreshTokenId)
                 .orElseThrow(() -> new AuthException(ResponseCode.UNAUTHORIZED));
 
+        // refresh_token 유효 기간 검증
+        // 만료 시 DB Token 테이블에서 삭제
         if (!refreshTokenRecord.getExpiresAt().isAfter(LocalDateTime.now())) {
             tokenRepository.delete(refreshTokenRecord);
             throw new AuthException(ResponseCode.UNAUTHORIZED);
         }
 
+        // refresh_token 재발급
         String refreshToken = refreshTokenRecord.getRefreshToken();
         String newRefreshToken = jwtProvider.createRefreshToken(refreshTokenRecord.getKakaoId(), jwtProvider.getUserNameFromRefreshToken(refreshToken));
 
+        // DB Token 테이블 갱신
         refreshTokenRecord.update(newRefreshToken, jwtProvider.getExpirationFromToken(newRefreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         tokenRepository.save(refreshTokenRecord);
 
+        // access_token 재발급
         String newAccessToken = jwtProvider.createAccessToken(refreshTokenRecord.getKakaoId(), refreshTokenId);
 
         return new ReissueResponse(newAccessToken);
@@ -105,12 +117,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Boolean validateToken(String authorizationHeader) {
+        // Header로부터 access_token 추출
         String accessToken = jwtProvider.getTokenFromAuthorizationHeader(authorizationHeader);
+
+        // access_token 검증
         try {
             jwtProvider.validateToken(accessToken);
         } catch (AuthException e) {
             return false;
         }
+
         return true;
     }
 
