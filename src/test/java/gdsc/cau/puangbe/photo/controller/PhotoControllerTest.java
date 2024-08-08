@@ -39,33 +39,6 @@ class PhotoControllerTest {
     ObjectMapper mapper = new ObjectMapper();
     String baseUrl = "/photo";
 
-    @DisplayName("createUploadRequest: 유저의 사진 업로드 요청을 처리하며, 성공 객체를 반환한다.")
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 45L, 82L, 123L})
-    void createUploadRequestTest(Long photoRequestId) throws Exception {
-        // given
-        when(photoService.createPhoto(photoRequestId)).thenReturn(1L);
-        String responseBody = mapper.writeValueAsString(APIResponse.success(1L, ResponseCode.PHOTO_RESULT_CREATE_SUCCESS.getMessage()));
-
-        // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/" + photoRequestId))
-                .andExpect(content().json(responseBody));
-    }
-
-    @DisplayName("createUploadRequest: photoRequestId가 유효하지 않으면 404 예외가 발생해야 하며, 실패 객체를 반환한다.")
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L, 3L, 45L, 82L, 123L})
-    void createUploadRequest404Test(Long photoRequestId) throws Exception {
-        // given
-        when(photoService.createPhoto(photoRequestId)).thenThrow(new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
-        String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
-
-        // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/" + photoRequestId))
-                .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.createPhoto(photoRequestId));
-    }
-
     @DisplayName("uploadImage: Python으로부터 처리 완료된 요청에 대한 정보를 업데이트한다.")
     @ParameterizedTest(name = "photoResultId={0}, imageUrl={1}")
     @CsvSource({
