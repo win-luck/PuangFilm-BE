@@ -13,4 +13,5 @@ public class CreateImageDto {
     
     List<String> photoOriginUrls;
     int gender; // 0 남자, 1 여자
+    String email;
 }

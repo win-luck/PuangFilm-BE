@@ -35,6 +35,8 @@ public class PhotoRequest {
 
     private RequestStatus status;
 
+    private String email;
+
     private LocalDateTime createDate;
 
     private LocalDateTime updateDate;
@@ -45,10 +47,11 @@ public class PhotoRequest {
     private List<PhotoOrigin> photoUrls = new ArrayList<>();
 
     @Builder
-    public PhotoRequest(User user, Gender gender, List<String> urls){
+    public PhotoRequest(User user, Gender gender, List<String> urls, String email) {
         this.user = user;
         this.gender = gender;
         this.status = RequestStatus.WAITING;
+        this.email = email;
         this.photoUrls = urls.stream().map(PhotoOrigin::new).toList();
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();

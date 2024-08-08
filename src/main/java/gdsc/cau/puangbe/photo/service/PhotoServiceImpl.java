@@ -46,7 +46,7 @@ public class PhotoServiceImpl implements PhotoService {
         redisTemplate.delete(user.getId().toString());
 
         // 이메일 발송
-        sendEmail(user.getEmail(), imageUrl);
+        sendEmail(photoRequest.getEmail(), imageUrl);
     }
 
     // 특정 요청의 imageUrl 조회

@@ -47,6 +47,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
                 .user(user)
                 .gender(Gender.fromInt(dto.getGender()))
                 .urls(dto.getPhotoOriginUrls())
+                .email(dto.getEmail())
                 .build();
         photoRequestRepository.save(request);
 

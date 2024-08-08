@@ -24,8 +24,6 @@ public class User {
 
     private String userName;
 
-    private String email;
-
     private LocalDateTime createDate;
 
     private LocalDateTime requestDate;
@@ -40,11 +38,10 @@ public class User {
     private List<PhotoRequest> photoRequest = new ArrayList<>();
 
     @Builder
-    public User(String userName, LocalDateTime createDate, LocalDateTime requestDate, String kakaoId, String email) {
+    public User(String userName, LocalDateTime createDate, LocalDateTime requestDate, String kakaoId) {
         this.userName = userName;
         this.createDate = createDate;
         this.requestDate = requestDate;
         this.kakaoId = kakaoId;
-        this.email = email;
     }
 }
