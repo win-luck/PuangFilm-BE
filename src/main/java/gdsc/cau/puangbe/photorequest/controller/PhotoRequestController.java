@@ -7,6 +7,7 @@ import gdsc.cau.puangbe.photorequest.service.PhotoRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class PhotoRequestController {
             @ApiResponse(responseCode = "404", description = "유저를 찾지 못했을 때")
     })
     @PostMapping
-    public APIResponse<Void> createImage(@RequestBody CreateImageDto dto, @RequestParam Long userId) {
+    public APIResponse<Void> createImage(@RequestBody @Valid CreateImageDto dto, @RequestParam Long userId) {
         photoRequestService.createImage(dto, userId);
         return APIResponse.success(null, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage());
     }

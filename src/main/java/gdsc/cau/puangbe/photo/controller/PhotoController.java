@@ -7,6 +7,7 @@ import gdsc.cau.puangbe.photo.service.PhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class PhotoController {
             @ApiResponse(responseCode = "409", description = "이미 url이 업로드되어 종료 상태인 경우")
     })
     @PostMapping("/url")
-    public APIResponse<Void> uploadImage(@RequestBody UploadImageDto uploadImageDto) {
+    public APIResponse<Void> uploadImage(@RequestBody @Valid UploadImageDto uploadImageDto) {
         photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
         return APIResponse.success(null, ResponseCode.PHOTO_RESULT_URL_UPLOADED.getMessage());
     }
