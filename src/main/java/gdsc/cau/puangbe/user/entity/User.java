@@ -1,15 +1,16 @@
 package gdsc.cau.puangbe.user.entity;
+
 import gdsc.cau.puangbe.photo.entity.PhotoRequest;
 import gdsc.cau.puangbe.photo.entity.PhotoResult;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter

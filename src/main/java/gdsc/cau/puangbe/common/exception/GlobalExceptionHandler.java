@@ -20,4 +20,10 @@ public class GlobalExceptionHandler {
         log.info("UserException: {}", e.getMessage());
         return APIResponse.fail(e.getResponseCode(), e.getMessage());
     }
+
+    @ExceptionHandler(AuthException.class)
+    public APIResponse<Void> handleAuthException(AuthException e) {
+        log.info("AuthException: {}", e.getMessage());
+        return APIResponse.fail(e.getResponseCode(), e.getMessage());
+    }
 }
