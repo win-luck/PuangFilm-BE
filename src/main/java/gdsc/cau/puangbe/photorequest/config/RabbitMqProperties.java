@@ -1,4 +1,4 @@
-package gdsc.cau.puangbe.auth.config;
+package gdsc.cau.puangbe.photorequest.config;
 
 
 import lombok.AllArgsConstructor;

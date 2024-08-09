@@ -1,6 +1,5 @@
-package gdsc.cau.puangbe.common.config;
+package gdsc.cau.puangbe.photorequest.config;
 
-import gdsc.cau.puangbe.auth.config.RabbitMqProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
