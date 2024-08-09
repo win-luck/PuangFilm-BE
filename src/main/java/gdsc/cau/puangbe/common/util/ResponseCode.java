@@ -33,6 +33,7 @@ public enum ResponseCode {
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
+    JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "JSON 파싱 오류가 발생하였습니다."),
 
     // 200 OK
     USER_LOGIN_SUCCESS(HttpStatus.OK, true, "사용자 로그인 성공"),
@@ -46,7 +47,10 @@ public enum ResponseCode {
     USER_CREATE_SUCCESS(HttpStatus.CREATED, true, "사용자 생성 성공"),
     PHOTO_REQUEST_CREATE_SUCCESS(HttpStatus.CREATED, true, "사진 요청 생성 성공"),
     PHOTO_RESULT_CREATE_SUCCESS(HttpStatus.CREATED, true, "PhotoResult 생성 성공"),
-    PHOTO_RESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공");
+    PHOTO_RESULT_URL_UPLOADED(HttpStatus.CREATED, true, "PhotoResult url 업로드 성공"),
+
+    // 202 Accepted
+    IMAGE_ON_PROCESS(HttpStatus.ACCEPTED, true, "해당 이미지는 처리 중입니다.");
 
     private final HttpStatus httpStatus;
     private final Boolean success;

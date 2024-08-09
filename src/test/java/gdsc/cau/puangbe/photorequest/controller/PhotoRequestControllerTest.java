@@ -42,7 +42,7 @@ class PhotoRequestControllerTest {
     ObjectMapper mapper = new ObjectMapper();
     String baseUrl = "/photo-request";
     CreateImageDto createImageDto = new CreateImageDto(
-            List.of("url1", "url2", "url3", "url4", "url5", "url6"), 0);
+            List.of("url1", "url2", "url3", "url4", "url5", "url6"), 0, "abc@naver.com");
 
     @DisplayName("createImage: 이미지 처리 요청을 처리하며, 성공 객체를 반환한다.")
     @Test
