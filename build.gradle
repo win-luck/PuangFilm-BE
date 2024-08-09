@@ -57,6 +57,9 @@ dependencies {
 
 	// Local Cache
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	// Rabbit MQ
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
 
 tasks.named('test') {
