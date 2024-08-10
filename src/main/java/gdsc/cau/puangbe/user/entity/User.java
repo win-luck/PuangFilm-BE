@@ -44,4 +44,8 @@ public class User {
         this.requestDate = requestDate;
         this.kakaoId = kakaoId;
     }
+
+    public void updateRequestDate(LocalDateTime requestDate) {
+        this.requestDate = requestDate;
+    }
 }
