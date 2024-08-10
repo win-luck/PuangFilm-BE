@@ -1,6 +1,8 @@
 package gdsc.cau.puangbe.photorequest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gdsc.cau.puangbe.auth.external.JwtProvider;
+import gdsc.cau.puangbe.common.config.resolver.PuangUserArgumentResolver;
 import gdsc.cau.puangbe.common.enums.RequestStatus;
 import gdsc.cau.puangbe.common.exception.BaseException;
 import gdsc.cau.puangbe.common.util.APIResponse;
@@ -20,7 +22,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,8 +40,14 @@ class PhotoRequestControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
+    @MockBean
+    private JwtProvider jwtProvider;
+
+    @MockBean
+    private PuangUserArgumentResolver puangUserArgumentResolver;
+
     ObjectMapper mapper = new ObjectMapper();
-    String baseUrl = "/photo-request";
+    String baseUrl = "/api/photo-request";
     CreateImageDto createImageDto = new CreateImageDto(
             List.of("url1", "url2", "url3", "url4", "url5", "url6"), 0, "abc@naver.com");
 
@@ -50,28 +57,28 @@ class PhotoRequestControllerTest {
         // given
         doNothing().when(photoRequestService).createImage(createImageDto, 1L);
         String requestBody = mapper.writeValueAsString(createImageDto);
+        String responseBody = mapper.writeValueAsString(APIResponse.success(null, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage()));
 
         // when & then
         mockMvc.perform(post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
-                .andExpect(status().isOk());
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
     }
 
     @DisplayName("createImage: 유저 정보가 유효하지 않으면 404 예외가 발생해야 하며, 실패 객체를 반환한다.")
     @Test
     void createImage404Test() throws Exception {
         // given
-        doThrow(new BaseException(ResponseCode.USER_NOT_FOUND)).when(photoRequestService).createImage(any(), anyLong());
+        doThrow(new BaseException(ResponseCode.USER_NOT_FOUND)).when(photoRequestService).createImage(any(CreateImageDto.class), any());
         String requestBody = mapper.writeValueAsString(createImageDto);
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.USER_NOT_FOUND));
 
         // when & then
         mockMvc.perform(post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
+                .content(requestBody))
                 .andExpect(content().json(responseBody));
         assertThrows(BaseException.class, () -> photoRequestService.createImage(createImageDto, 1L));
     }
@@ -81,12 +88,11 @@ class PhotoRequestControllerTest {
     void getRequestImagesTest() throws Exception {
         // given
         List<String> urls = List.of("url1", "url2", "url3", "url4", "url5", "url6");
-        when(photoRequestService.getRequestImages(1L)).thenReturn(urls);
+        when(photoRequestService.getRequestImages(any())).thenReturn(urls);
         String responseBody = mapper.writeValueAsString(APIResponse.success(urls, ResponseCode.PHOTO_LIST_FOUND.getMessage()));
 
         // when & then
-        mockMvc.perform(get(baseUrl + "/list")
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
+        mockMvc.perform(get(baseUrl + "/list"))
                 .andExpect(content().json(responseBody));
     }
 
@@ -94,12 +100,11 @@ class PhotoRequestControllerTest {
     @Test
     void getRequestImages404Test() throws Exception {
         // given
-        when(photoRequestService.getRequestImages(1L)).thenThrow(new BaseException(ResponseCode.USER_NOT_FOUND));
+        when(photoRequestService.getRequestImages(any())).thenThrow(new BaseException(ResponseCode.USER_NOT_FOUND));
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.USER_NOT_FOUND));
 
         // when & then
-        mockMvc.perform(get(baseUrl + "/list")
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
+        mockMvc.perform(get(baseUrl + "/list"))
                 .andExpect(content().json(responseBody));
         assertThrows(BaseException.class, () -> photoRequestService.getRequestImages(1L));
     }
@@ -108,12 +113,11 @@ class PhotoRequestControllerTest {
     @Test
     void getRequestStatusTest() throws Exception {
         // given
-        when(photoRequestService.getRequestStatus(1L)).thenReturn(RequestStatus.FINISHED.name());
+        when(photoRequestService.getRequestStatus(any())).thenReturn(RequestStatus.FINISHED.name());
         String responseBody = mapper.writeValueAsString(APIResponse.success(RequestStatus.FINISHED.name(), ResponseCode.PHOTO_STATUS_FOUND.getMessage()));
 
         // when & then
-        mockMvc.perform(get(baseUrl + "/check")
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
+        mockMvc.perform(get(baseUrl + "/status"))
                 .andExpect(content().json(responseBody));
     }
 
@@ -121,12 +125,11 @@ class PhotoRequestControllerTest {
     @Test
     void getRequestStatus404Test() throws Exception {
         // given
-        when(photoRequestService.getRequestStatus(1L)).thenThrow(new BaseException(ResponseCode.USER_NOT_FOUND));
+        when(photoRequestService.getRequestStatus(any())).thenThrow(new BaseException(ResponseCode.USER_NOT_FOUND));
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.USER_NOT_FOUND));
 
         // when & then
-        mockMvc.perform(get(baseUrl + "/check")
-                .param("userId", "1")) // FIXME: 추후 JWT 시 개편 필요
+        mockMvc.perform(get(baseUrl + "/status"))
                 .andExpect(content().json(responseBody));
         assertThrows(BaseException.class, () -> photoRequestService.getRequestStatus(1L));
     }
