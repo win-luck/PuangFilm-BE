@@ -1,11 +1,14 @@
 package gdsc.cau.puangbe.photo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gdsc.cau.puangbe.auth.external.JwtProvider;
+import gdsc.cau.puangbe.common.config.resolver.PuangUserArgumentResolver;
 import gdsc.cau.puangbe.common.exception.BaseException;
 import gdsc.cau.puangbe.common.util.APIResponse;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photo.dto.request.UploadImageDto;
 import gdsc.cau.puangbe.photo.service.PhotoService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,8 +39,20 @@ class PhotoControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
+    @MockBean
+    private JwtProvider jwtProvider;
+
+    @MockBean
+    private PuangUserArgumentResolver puangUserArgumentResolver;
+
     ObjectMapper mapper = new ObjectMapper();
-    String baseUrl = "/photo";
+    String baseUrl = "/api/photo";
+    String kakaoId = "kakaoId";
+
+    @BeforeEach
+    void setUp() {
+        when(jwtProvider.getKakaoIdFromToken(anyString())).thenReturn(kakaoId);
+    }
 
     @DisplayName("uploadImage: Python으로부터 처리 완료된 요청에 대한 정보를 업데이트한다.")
     @ParameterizedTest(name = "photoResultId={0}, imageUrl={1}")
@@ -52,7 +67,7 @@ class PhotoControllerTest {
     void uploadImageTest(Long photoResultId, String imageUrl) throws Exception {
         // given
         UploadImageDto uploadImageDto = new UploadImageDto(photoResultId, imageUrl);
-        doNothing().when(photoService).uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
+        doNothing().when(photoService).uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl());
         String responseBody = mapper.writeValueAsString(APIResponse.success(null, ResponseCode.PHOTO_RESULT_URL_UPLOADED.getMessage()));
 
         // when & then
@@ -67,7 +82,7 @@ class PhotoControllerTest {
     void uploadImage404Test() throws Exception {
         // given
         UploadImageDto uploadImageDto = new UploadImageDto(1L, "imageUrl");
-        doThrow(new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND)).when(photoService).uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
+        doThrow(new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND)).when(photoService).uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl());
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.PHOTO_RESULT_NOT_FOUND));
 
         // when & then
@@ -75,7 +90,7 @@ class PhotoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(uploadImageDto)))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl()));
+        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()));
     }
 
     @DisplayName("uploadImage: 이미지를 업로드하려는 photoResult의 상태가 FINISHED이면 409 예외가 발생하며, 실패 객체를 반환한다.")
@@ -83,7 +98,7 @@ class PhotoControllerTest {
     void uploadImage409Test() throws Exception {
         // given
         UploadImageDto uploadImageDto = new UploadImageDto(1L, "imageUrl");
-        doThrow(new BaseException(ResponseCode.URL_ALREADY_UPLOADED)).when(photoService).uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl());
+        doThrow(new BaseException(ResponseCode.URL_ALREADY_UPLOADED)).when(photoService).uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl());
         String responseBody = mapper.writeValueAsString(APIResponse.fail(ResponseCode.URL_ALREADY_UPLOADED));
 
         // when & then
@@ -91,7 +106,7 @@ class PhotoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(uploadImageDto)))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoResultId(), uploadImageDto.getImageUrl()));
+        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()));
     }
 
     @DisplayName("getImage: 유저의 특정 요청의 결과로 만들어진 이미지 URL을 조회한다.")

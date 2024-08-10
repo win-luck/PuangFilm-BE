@@ -1,10 +1,13 @@
 package gdsc.cau.puangbe.photorequest.controller;
 
+import gdsc.cau.puangbe.common.annotation.PuangUser;
 import gdsc.cau.puangbe.common.util.APIResponse;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photorequest.dto.CreateImageDto;
 import gdsc.cau.puangbe.photorequest.service.PhotoRequestService;
+import gdsc.cau.puangbe.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -15,20 +18,20 @@ import java.util.List;
 
 @Tag(name = "photo-request", description = "사진 처리 요청 관련 API")
 @RequiredArgsConstructor
-@RequestMapping("/photo-request")
+@RequestMapping("/api/photo-request")
 @RestController
 public class PhotoRequestController {
     private final PhotoRequestService photoRequestService;
 
     // 이미지 처리 요청 생성
     @Tag(name = "photo-request")
-    @Operation(summary = "이미지 처리 요청 생성", description = "이미지 처리 요청을 생성한다.", responses = {
+    @Operation(summary = "유저의 이미지 처리 요청 생성", description = "유저의 AI 프로필 이미지 처리 요청을 생성한다.", responses = {
             @ApiResponse(responseCode = "200", description = "이미지 처리 요청 생성 성공"),
             @ApiResponse(responseCode = "404", description = "유저를 찾지 못했을 때")
     })
     @PostMapping
-    public APIResponse<Void> createImage(@RequestBody @Valid CreateImageDto dto, @RequestParam Long userId) {
-        photoRequestService.createImage(dto, userId);
+    public APIResponse<Void> createImage(@Parameter(hidden = true) @PuangUser User user, @RequestBody @Valid CreateImageDto dto) {
+        photoRequestService.createImage(dto, user.getId());
         return APIResponse.success(null, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage());
     }
 
@@ -39,8 +42,8 @@ public class PhotoRequestController {
             @ApiResponse(responseCode = "404", description = "유저를 찾지 못했을 때")
     })
     @GetMapping("/list")
-    public APIResponse<List<String>> getRequestImages(@RequestParam Long userId) {
-        return APIResponse.success(photoRequestService.getRequestImages(userId), ResponseCode.PHOTO_LIST_FOUND.getMessage());
+    public APIResponse<List<String>> getRequestImages(@Parameter(hidden = true) @PuangUser User user) {
+        return APIResponse.success(photoRequestService.getRequestImages(user.getId()), ResponseCode.PHOTO_LIST_FOUND.getMessage());
     }
 
     // 최근 생성 요청한 이미지 상태 조회
@@ -49,8 +52,8 @@ public class PhotoRequestController {
             @ApiResponse(responseCode = "200", description = "최근 생성 요청한 이미지 상태 조회 성공"),
             @ApiResponse(responseCode = "404", description = "유저의 최근 요청을 찾지 못했을 때")
     })
-    @GetMapping("/check")
-    public APIResponse<String> getRequestStatus(@RequestParam Long userId) {
-        return APIResponse.success(photoRequestService.getRequestStatus(userId), ResponseCode.PHOTO_STATUS_FOUND.getMessage());
+    @GetMapping("/status")
+    public APIResponse<String> getRequestStatus(@Parameter(hidden = true) @PuangUser User user) {
+        return APIResponse.success(photoRequestService.getRequestStatus(user.getId()), ResponseCode.PHOTO_STATUS_FOUND.getMessage());
     }
 }

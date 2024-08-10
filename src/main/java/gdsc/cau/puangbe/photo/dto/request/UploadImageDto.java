@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UploadImageDto {
 
-    @NotNull(message = "photoResultId는 필수입니다.")
-    Long photoResultId;
+    @NotNull(message = "photoRequestId 필수입니다.")
+    Long photoRequestId;
 
     @NotNull(message = "imageUrl는 필수입니다.")
     String imageUrl;
