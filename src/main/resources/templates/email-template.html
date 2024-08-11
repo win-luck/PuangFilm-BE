@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>푸앙이 사진관 - 사진 생성 완료</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif; color: #333;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <!-- Top Logo -->
+    <tr>
+        <td style="text-align: center; padding: 20px;">
+            <img src="https://via.placeholder.com/300x100?text=Top+Logo" alt="Top Logo" style="max-width: 300px; height: auto; display: block; margin: 0 auto;">
+        </td>
+    </tr>
+
+    <!-- Content -->
+    <tr>
+        <td style="padding: 20px; text-align: center;">
+            <p style="margin: 0 0 40px 0;">안녕하세요, <strong th:text="${userName}">[사용자 이름]</strong>님!</p>
+            <p style="margin: 0 0 30px 0;">AI 프로필 사진이 성공적으로 생성되었어요😊</p>
+            <p style="margin: 0 0 10px 0;">AI 프로필에 프레임을 적용해서</p>
+            <p style="margin: 0 0 40px 0;">나만의 특별한 프로필을 만들어보세요✨</p>
+
+            <!-- AI Photo -->
+            <p style="margin: 0 0 30px 0;">
+                <img src="${photoUrl}" alt="AI 프로필 사진" style="max-width: 200px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+            </p>
+
+            <!-- Button -->
+            <p style="margin: 0 0 50px 0;">
+                <a href="#" th:href="@{${framePageUrl}}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">프레임 적용해보기</a>
+            </p>
+        </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+        <td style="padding: 15px; text-align: center; font-size: 14px; color: #777;">
+            <p style="margin: 0;">GDSC CAU 푸앙이 사진관 드림</p>
+        </td>
+    </tr>
+
+    <!-- Bottom Logo -->
+    <tr>
+        <td style="text-align: center; padding: 5px;">
+            <img src="https://via.placeholder.com/300x100?text=Bottom+Logo" alt="Bottom Logo" style="max-width: 300px; height: auto; display: block; margin: 0 auto;">
+        </td>
+    </tr>
+</table>
+</body>
+</html>
