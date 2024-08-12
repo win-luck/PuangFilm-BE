@@ -36,6 +36,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
     private final UserRepository userRepository;
     private final RedisTemplate<String, Long> redisTemplate;
     private final ObjectMapper mapper;
+    private final RabbitMqService rabbitMqService;
 
     //이미지 처리 요청 생성 (RabbitMQ호출)
     @Override
@@ -67,8 +68,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
                     .build();
             String message = mapper.writeValueAsString(imageInfo);
 
-            // TODO: RabbitMQ 호출
-            // 1. RabbitMQ를 호출해서 message를 큐에 함께 넣어서 파이썬에서 접근할 수 있도록 한다.
+            rabbitMqService.sendMessage(message); // 1. RabbitMQ를 호출해서 message를 큐에 함께 넣어서 파이썬에서 접근할 수 있도록 한다.
             // 2. Redis에 <String keyName, Long requestId> 형식으로 진행되고 있는 request 정보를 저장한다.
             // 3. 추후 사진이 완성된다면 requestId를 통해 request를 찾아서 상태를 바꾸고 1:1 관계인 result에 접근해서 imageUrl를 수정한다.
             // 4. 즉, 파이썬에서 스프링으로 향하는 POST API는 {requestId, imageUrl}이 필수적으로 존재해야 한다.
