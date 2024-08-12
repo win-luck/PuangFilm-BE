@@ -41,7 +41,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
     //이미지 처리 요청 생성 (RabbitMQ호출)
     @Override
     @Transactional
-    public void createImage(CreateImageDto dto, Long userId){
+    public Long createImage(CreateImageDto dto, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
         // PhotoRequest 생성
         PhotoRequest request = PhotoRequest.builder()
@@ -80,6 +80,8 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
         // Redis에 userId 저장하고, userId로 requestId 추적할 수 있도록 함
         redisTemplate.opsForSet().add(ConstantUtil.USER_ID_KEY, userId);
         redisTemplate.opsForSet().add(userId.toString(), request.getId());
+
+        return request.getId();
     }
 
     // 유저의 전체 사진 리스트 조회

@@ -30,9 +30,8 @@ public class PhotoRequestController {
             @ApiResponse(responseCode = "404", description = "유저를 찾지 못했을 때")
     })
     @PostMapping
-    public APIResponse<Void> createImage(@Parameter(hidden = true) @PuangUser User user, @RequestBody @Valid CreateImageDto dto) {
-        photoRequestService.createImage(dto, user.getId());
-        return APIResponse.success(null, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage());
+    public APIResponse<Long> createImage(@Parameter(hidden = true) @PuangUser User user, @RequestBody @Valid CreateImageDto dto) {
+        return APIResponse.success(photoRequestService.createImage(dto, user.getId()), ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage());
     }
 
     // 유저의 전체 사진 리스트 조회

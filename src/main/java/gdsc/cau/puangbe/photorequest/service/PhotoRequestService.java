@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface PhotoRequestService {
     //이미지 처리 요청 생성 (RabbitMQ호출)
-    void createImage(CreateImageDto dto, Long userId);
+    Long createImage(CreateImageDto dto, Long userId);
 
     //유저의 전체 사진 리스트 조회
     List<String> getRequestImages(Long userId);

@@ -34,6 +34,7 @@ public enum ResponseCode {
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
     JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "JSON 파싱 오류가 발생하였습니다."),
+    EMAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "이메일 발송에 오류가 발생하였습니다."),
 
     // 200 OK
     USER_LOGIN_SUCCESS(HttpStatus.OK, true, "사용자 로그인 성공"),
