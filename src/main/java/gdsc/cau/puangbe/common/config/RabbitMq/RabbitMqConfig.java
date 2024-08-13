@@ -18,45 +18,28 @@ import org.springframework.amqp.core.Queue;
 @Configuration
 public class RabbitMqConfig {
     private final RabbitMqProperties rabbitMqProperties;
-
-    /**
-     * Exchange : Producer로부터 전달받은 메시지를 어떤 메시지 큐로 전송할 지 결정하는 장소
-     */
-    @Value("${rabbitmq.exchange.name}")
-    private String exchangeName;
-
-    /**
-     * Routing : Exchange에서 해당하는 key에 맞게 Queue에 분배
-     */
-    @Value("${rabbitmq.routing.key}")
-    private String routingKey;
-
-    /**
-     * Queue : Consumer가 소비하기 전까지 메시지가 보관되는 장소
-     */
-    @Value("${rabbitmq.queue.name}")
-    private String queueName;
+    private final RabbitMqInfo rabbitMqInfo;
 
     @Bean
     public Queue queue() {
-        return new Queue(queueName);
+        return new Queue(rabbitMqInfo.getQueueName());
     }
 
     /**
-     * 지정된 Exchange 이름으로 Direct Exchange Bean 을 생성
+     * 지정된 Exchange 이름으로 Direct Exchange Bean 생성
      */
     @Bean
     public DirectExchange directExchange() {
-        return new DirectExchange(exchangeName);
+        return new DirectExchange(rabbitMqInfo.getExchangeName());
     }
 
     /**
-     * 주어진 Queue 와 Exchange 을 Binding 하고 Routing Key 을 이용하여 Binding Bean 생성
-     * Exchange 에 Queue 을 등록한다고 이해하자
+     * 주어진 Queue와 Exchange Binding
+     * Routing Key 을 이용하여 Binding Bean 생성
      **/
     @Bean
     public Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+        return BindingBuilder.bind(queue).to(exchange).with(rabbitMqInfo.getQueueName());
     }
 
     /**
@@ -84,7 +67,7 @@ public class RabbitMqConfig {
     }
 
     /**
-     * 직렬화(메세지를 JSON 으로 변환하는 Message Converter)
+     * 직렬화 (메세지를 JSON 으로 변환하는 Message Converter)
      */
     @Bean
     public MessageConverter jackson2JsonMessageConverter() {
