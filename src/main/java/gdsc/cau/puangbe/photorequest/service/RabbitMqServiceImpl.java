@@ -28,11 +28,10 @@ public class RabbitMqServiceImpl implements RabbitMqService{
      * 2. Producer 역할 -> Direct Exchange (메시지의 routing key와 정확히 일치하는 binding된 Queue로 routing)
      **/
     public void sendMessage(String message) {
+        this.rabbitTemplate.convertAndSend(exchangeName, routingKey, message);
         log.info("**Message Send**: {}",message);
         log.info("messagge queue: {}", queueName);
         log.info("messagge exchange: {}", exchangeName);
         log.info("messagge routingKey: {}", routingKey);
-        this.rabbitTemplate.convertAndSend(exchangeName, routingKey, message);
     }
-
 }
