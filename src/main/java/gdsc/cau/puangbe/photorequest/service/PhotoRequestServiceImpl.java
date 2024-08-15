@@ -59,6 +59,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
                 .createDate(LocalDateTime.now())
                 .build();
         photoResultRepository.save(photoResult);
+        log.info("사용자의 이미지 요청 생성 완료, RabbitMQ에 전송 준비: {}", userId);
 
         try {
             ImageInfo imageInfo = ImageInfo.builder()
@@ -72,6 +73,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
             // 2. Redis에 <String keyName, Long requestId> 형식으로 진행되고 있는 request 정보를 저장한다.
             // 3. 추후 사진이 완성된다면 requestId를 통해 request를 찾아서 상태를 바꾸고 1:1 관계인 result에 접근해서 imageUrl를 수정한다.
             // 4. 즉, 파이썬에서 스프링으로 향하는 POST API는 {requestId, imageUrl}이 필수적으로 존재해야 한다.
+            log.info("RabbitMQ 전송 완료: {}", message);
         } catch (JsonProcessingException e) {
             log.error("JSON 변환 실패");
             throw new PhotoRequestException(ResponseCode.JSON_PARSE_ERROR);
@@ -80,7 +82,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
         // Redis에 userId 저장하고, userId로 requestId 추적할 수 있도록 함
         redisTemplate.opsForSet().add(ConstantUtil.USER_ID_KEY, userId);
         redisTemplate.opsForSet().add(userId.toString(), request.getId());
-
+        log.info("Redis 대기열 등록 완료: {}", userId);
         return request.getId();
     }
 
@@ -91,6 +93,7 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
         validateUser(userId);
 
         // 현재 처리가 완료되지 않은 이미지(imageUrl이 null)는 보내지 않음
+        log.info("사용자의 이미지 리스트 조회 시도: {}", userId);
         return photoResultRepository.findAllByUserId(userId)
                 .stream()
                 .map(PhotoResult::getImageUrl)
@@ -106,12 +109,14 @@ public class PhotoRequestServiceImpl implements PhotoRequestService {
 
         // Redis에 userId가 존재하면 아직 처리 대기 중인 요청이므로 WAITING 반환
         if(Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(ConstantUtil.USER_ID_KEY, userId))){
+            log.info("사용자의 요청 상태 조회, 현재 대기 중: {}", userId);
             return RequestStatus.WAITING.name();
         }
 
         RequestStatus status = photoRequestRepository.findTopByUserIdOrderByCreateDateDesc(userId)
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND))
                 .getStatus();
+        log.info("사용자의 요청 상태 조회, 현재 상태: {} {}", status.name(), userId);
         return status.name();
     }
 
