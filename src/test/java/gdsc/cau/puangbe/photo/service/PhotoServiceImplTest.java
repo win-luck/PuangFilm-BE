@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.IContext;
 
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ class PhotoServiceImplTest {
     private User user;
 
     @Mock
-    private ITemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
 
     @Mock
     private JavaMailSender mailSender;
