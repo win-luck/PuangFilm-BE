@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,9 +55,9 @@ class PhotoRequestControllerTest {
     @Test
     void createImageTest() throws Exception {
         // given
-        doNothing().when(photoRequestService).createImage(createImageDto, 1L);
+        when(photoRequestService.createImage(any(CreateImageDto.class), any())).thenReturn(1L);
         String requestBody = mapper.writeValueAsString(createImageDto);
-        String responseBody = mapper.writeValueAsString(APIResponse.success(null, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage()));
+        String responseBody = mapper.writeValueAsString(APIResponse.success(1L, ResponseCode.PHOTO_REQUEST_CREATE_SUCCESS.getMessage()));
 
         // when & then
         mockMvc.perform(post(baseUrl)
@@ -80,7 +80,9 @@ class PhotoRequestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoRequestService.createImage(createImageDto, 1L));
+        assertThatThrownBy(() -> photoRequestService.createImage(createImageDto, 1L))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.USER_NOT_FOUND.getMessage());
     }
 
     @DisplayName("getRequestImages: 유저의 전체 사진 리스트를 조회하며, 성공 객체를 반환한다.")
@@ -106,7 +108,9 @@ class PhotoRequestControllerTest {
         // when & then
         mockMvc.perform(get(baseUrl + "/list"))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoRequestService.getRequestImages(1L));
+        assertThatThrownBy(() -> photoRequestService.getRequestImages(1L))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.USER_NOT_FOUND.getMessage());
     }
 
     @DisplayName("getRequestStatus: 유저의 최근 요청 상태를 조회하며, 성공 객체를 반환한다.")
@@ -131,6 +135,8 @@ class PhotoRequestControllerTest {
         // when & then
         mockMvc.perform(get(baseUrl + "/status"))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoRequestService.getRequestStatus(1L));
+        assertThatThrownBy(() -> photoRequestService.getRequestStatus(1L))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.USER_NOT_FOUND.getMessage());
     }
 }

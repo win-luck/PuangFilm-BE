@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -90,7 +90,9 @@ class PhotoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(uploadImageDto)))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()));
+        assertThatThrownBy(() -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.PHOTO_RESULT_NOT_FOUND.getMessage());
     }
 
     @DisplayName("uploadImage: 이미지를 업로드하려는 photoResult의 상태가 FINISHED이면 409 예외가 발생하며, 실패 객체를 반환한다.")
@@ -106,7 +108,9 @@ class PhotoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(uploadImageDto)))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()));
+        assertThatThrownBy(() -> photoService.uploadPhoto(uploadImageDto.getPhotoRequestId(), uploadImageDto.getImageUrl()))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.URL_ALREADY_UPLOADED.getMessage());
     }
 
     @DisplayName("getImage: 유저의 특정 요청의 결과로 만들어진 이미지 URL을 조회한다.")
@@ -140,6 +144,8 @@ class PhotoControllerTest {
         // when & then
         mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/" + photoRequestId))
                 .andExpect(content().json(responseBody));
-        assertThrows(BaseException.class, () -> photoService.getPhotoUrl(photoRequestId));
+        assertThatThrownBy(() -> photoService.getPhotoUrl(photoRequestId))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(ResponseCode.PHOTO_RESULT_NOT_FOUND.getMessage());
     }
 }

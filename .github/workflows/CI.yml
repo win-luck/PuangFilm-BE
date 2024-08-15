@@ -3,11 +3,9 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
   pull_request_target:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -36,6 +34,9 @@ jobs:
           touch ./application-prod.yml
           echo "${{ secrets.APPLICATION }}" > ./application.yml
           echo "${{ secrets.PROD }}" > ./application-prod.yml
+
+      - name: Test with Gradle
+        run: ./gradlew test
 
       - name: Build with Gradle
         run: ./gradlew build -x test
