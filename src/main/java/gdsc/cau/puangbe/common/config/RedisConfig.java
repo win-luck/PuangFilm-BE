@@ -1,5 +1,8 @@
 package gdsc.cau.puangbe.common.config;
 
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,6 +13,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+    @Value("${spring.data.redis.host}")
+    String host;
+    @Value("${spring.data.redis.port}")
+    Integer port;
 
     // String key, Long value(requestId)를 다루기 위한 RedisTemplate입니다. (현재 유저의 요청의 대기열 역할을 수행하게 됩니다)
     // opsForSet().add()를 통해 requestId를 추가할 수 있으며, 이 때 key는 별도로 만든 키로 설정합니다. (RequestQueue 등)
@@ -32,5 +39,10 @@ public class RedisConfig {
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
+    }
+
+    @Bean
+    public RedisClient redisClient() {
+        return RedisClient.create(RedisURI.builder().withHost(host).withPort(port).build());
     }
 }

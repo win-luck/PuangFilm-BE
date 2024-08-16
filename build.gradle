@@ -62,8 +62,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
 	// Rabbit MQ
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+	// bucket4j
+	implementation 'com.bucket4j:bucket4j_jdk17-redis-common:8.13.1'
+	implementation 'com.bucket4j:bucket4j_jdk17-lettuce:8.13.1'
 }
 
 tasks.named('test') {
