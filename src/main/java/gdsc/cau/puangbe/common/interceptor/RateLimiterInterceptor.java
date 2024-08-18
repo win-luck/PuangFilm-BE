@@ -1,8 +1,8 @@
 package gdsc.cau.puangbe.common.interceptor;
 
+import gdsc.cau.puangbe.auth.external.JwtProvider;
 import gdsc.cau.puangbe.common.enums.RateLimitPolicy;
 import gdsc.cau.puangbe.common.exception.RateLimiterException;
-import gdsc.cau.puangbe.common.util.ClientIPUtil;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.BucketConfiguration;
@@ -21,16 +21,18 @@ import java.time.Duration;
 public class RateLimiterInterceptor implements HandlerInterceptor {
     private final LettuceBasedProxyManager<String> proxyManager;
     private final RedisTemplate<String, Long> redisTemplate;
+    private final JwtProvider jwtProvider;
 
     private final String LIMITER_PREFIX = "rate-limiter-count:";
     private final String BLOCKED_PREFIX = "rate-limiter-blocked:";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // key 생성 (IP + API 엔트포인트)
-        String clientIp = ClientIPUtil.getClientIp(request);
+        // key 생성 (kakaoId + API 엔트포인트)
+        String accessToken = jwtProvider.getTokenFromAuthorizationHeader(request.getHeader("Authorization"));
+        String kakaoId = jwtProvider.getKakaoIdFromExpiredToken(accessToken);
         String servletPath = request.getServletPath();
-        String key = clientIp + servletPath;
+        String key = kakaoId + servletPath;
 
         if (isBlocked(key)) {
             throw new RateLimiterException(ResponseCode.RATE_LIMITER_TOO_MANY_REQUESTS);
