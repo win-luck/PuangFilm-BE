@@ -10,13 +10,20 @@ import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
 public class RateLimiterInterceptor implements HandlerInterceptor {
     private final LettuceBasedProxyManager<String> proxyManager;
+    private final RedisTemplate<String, Long> redisTemplate;
+
+    private final String LIMITER_PREFIX = "rate-limiter-count:";
+    private final String BLOCKED_PREFIX = "rate-limiter-blocked:";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -25,10 +32,15 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
         String servletPath = request.getServletPath();
         String key = clientIp + servletPath;
 
+        if (isBlocked(key)) {
+            throw new RateLimiterException(ResponseCode.RATE_LIMITER_TOO_MANY_REQUESTS);
+        }
+
         // key에 해당하는 bucket 로드. 없으면 생성
-        Bucket bucket = proxyManager.getProxy(key, () -> getRateLimitPolicy(servletPath));
+        Bucket bucket = proxyManager.getProxy(LIMITER_PREFIX + key, () -> getRateLimitPolicy(servletPath));
 
         if (!bucket.tryConsume(1)) {
+            blockClient(key);
             throw new RateLimiterException(ResponseCode.RATE_LIMITER_TOO_MANY_REQUESTS);
         }
         return true;
@@ -48,5 +60,13 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
             default:
                 return bucketConfiguration("general");
         }
+    }
+
+    private void blockClient(String key) {
+        redisTemplate.opsForValue().set(BLOCKED_PREFIX + key, 0L, Duration.ofMinutes(5));
+    }
+
+    private boolean isBlocked(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(BLOCKED_PREFIX + key));
     }
 }

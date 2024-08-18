@@ -16,12 +16,12 @@ public enum RateLimitPolicy {
         @Override
         public Bandwidth getLimit() {
             return Bandwidth.builder()
-                    .capacity(30)
-                    .refillIntervally(10, Duration.ofMinutes(1))
+                    .capacity(50)
+                    .refillIntervally(50, Duration.ofSeconds(1))
                     .build();
         }
-        // 버킷 용량: 토큰 30개
-        // 1분에 토큰 30개씩 리필 (버킷 용량 내에서)
+        // 버킷 용량: 토큰 50개
+        // 1초에 토큰 50개씩 리필 (버킷 용량 내에서)
         // 1시간마다 버킷 전체 리필(RateLimiterConfig에 설정됨)
     },
 
@@ -29,12 +29,12 @@ public enum RateLimitPolicy {
         @Override
         public Bandwidth getLimit() {
             return Bandwidth.builder()
-                    .capacity(5)
-                    .refillIntervally(3, Duration.ofMinutes(1))
+                    .capacity(1)
+                    .refillIntervally(1, Duration.ofSeconds(1))
                     .build();
         }
-        // 버킷 용량: 토큰 5개
-        // 1분에 토큰 3개씩 리필 (버킷 용량 내에서)
+        // 버킷 용량: 토큰 1개
+        // 1초에 토큰 1개씩 리필 (버킷 용량 내에서)
         // 1시간마다 버킷 전체 리필(RateLimiterConfig에 설정됨)
     },
 
