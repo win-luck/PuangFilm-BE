@@ -29,7 +29,12 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // key 생성 (kakaoId + API 엔트포인트)
-        String accessToken = jwtProvider.getTokenFromAuthorizationHeader(request.getHeader("Authorization"));
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null) {
+            return true;
+        }
+
+        String accessToken = jwtProvider.getTokenFromAuthorizationHeader(authorizationHeader);
         String kakaoId = jwtProvider.getKakaoIdFromExpiredToken(accessToken);
         String servletPath = request.getServletPath();
         String key = kakaoId + servletPath;
