@@ -31,10 +31,14 @@ public enum ResponseCode {
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, false, "이미 존재하는 사용자입니다."),
     URL_ALREADY_UPLOADED(HttpStatus.CONFLICT, false, "이미 url이 업로드 되었습니다."),
 
+    // 429 Too Many Requests
+    RATE_LIMITER_TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, false, "호출 허용량 초과입니다. 잠시 후 다시 시도해 주세요."),
+
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "서버에 오류가 발생하였습니다."),
     JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "JSON 파싱 오류가 발생하였습니다."),
     EMAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "이메일 발송에 오류가 발생하였습니다."),
+    RATE_LIMITER_POLICY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, false, "정의되지 않은 정책입니다."),
 
     // 200 OK
     USER_LOGIN_SUCCESS(HttpStatus.OK, true, "사용자 로그인 성공"),

@@ -26,4 +26,10 @@ public class GlobalExceptionHandler {
         log.info("AuthException: {}", e.getMessage());
         return APIResponse.fail(e.getResponseCode(), e.getMessage());
     }
+
+    @ExceptionHandler(RateLimiterException.class)
+    public APIResponse<Void> handleRateLimiterException(RateLimiterException e) {
+        log.info("RateLimiterException: {}", e.getMessage());
+        return APIResponse.fail(e.getResponseCode(), e.getMessage());
+    }
 }
