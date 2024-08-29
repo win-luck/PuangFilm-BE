@@ -132,7 +132,7 @@ public class JwtProvider implements InitializingBean {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
-        throw new AuthException(ResponseCode.BAD_REQUEST);
+        throw new AuthException(ResponseCode.USER_NO_AUTH_HEADER);
     }
 
 }

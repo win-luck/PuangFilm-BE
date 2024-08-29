@@ -57,7 +57,7 @@ public class OIDCProvider {
         // 온점(.)을 기준으로 헤더, 페이로드, 서명을 분리
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
-            throw new AuthException(ResponseCode.BAD_REQUEST); // Invalid JWT token
+            throw new AuthException(ResponseCode.USER_INVALID_TOKEN); // Invalid JWT token
         }
 
         // 페이로드를 추출하여 Base64 방식으로 디코딩
@@ -100,7 +100,7 @@ public class OIDCProvider {
         // 온점(.)을 기준으로 헤더, 페이로드, 서명을 분리
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
-            throw new AuthException(ResponseCode.BAD_REQUEST); // Invalid JWT token
+            throw new AuthException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
 
         // 헤더을 추출하여 Base64 방식으로 디코딩
@@ -119,7 +119,7 @@ public class OIDCProvider {
         return kakaoIdTokenPublicKeyList.getKeys().stream()
                 .filter(kakaoIDTokenJWK -> kakaoIDTokenJWK.getKid().equals(kid))
                 .findFirst()
-                .orElseThrow(() -> new AuthException(ResponseCode.BAD_REQUEST)); // 일치하는 PK 없음
+                .orElseThrow(() -> new AuthException(ResponseCode.UNAUTHORIZED)); // 일치하는 PK 없음
     }
 
     // JWK로 RSA Public Key 생성

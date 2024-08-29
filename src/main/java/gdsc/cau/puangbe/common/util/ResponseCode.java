@@ -11,13 +11,15 @@ public enum ResponseCode {
 
     // 400 Bad Request
     BAD_REQUEST(HttpStatus.BAD_REQUEST, false, "잘못된 요청입니다."),
+    USER_NO_AUTH_HEADER(HttpStatus.BAD_REQUEST, false, "Authorization 헤더가 존재하지 않습니다."),
+    USER_INVALID_TOKEN(HttpStatus.BAD_REQUEST, false, "토큰이 형식이 올바르지 않습니다."),
+    USER_INVALID_KAKAO_CODE(HttpStatus.BAD_REQUEST, false, "인가 코드가 유효하지 않습니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, false, "인증되지 않은 사용자입니다."),
 
     // 403 Forbidden
     FORBIDDEN(HttpStatus.FORBIDDEN, false, "권한이 없습니다."),
-    REFRESH_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, false, "리프레시 토큰이 만료되었습니다."),
 
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, false, "사용자를 찾을 수 없습니다."),
