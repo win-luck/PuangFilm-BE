@@ -1,14 +1,16 @@
 package gdsc.cau.puangbe.photorequest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gdsc.cau.puangbe.auth.external.JwtProvider;
 import gdsc.cau.puangbe.common.config.resolver.PuangUserArgumentResolver;
 import gdsc.cau.puangbe.common.enums.RequestStatus;
 import gdsc.cau.puangbe.common.exception.BaseException;
+import gdsc.cau.puangbe.common.interceptor.RateLimiterInterceptor;
 import gdsc.cau.puangbe.common.util.APIResponse;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photorequest.dto.CreateImageDto;
 import gdsc.cau.puangbe.photorequest.service.PhotoRequestService;
+import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,24 +34,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PhotoRequestControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @MockBean
-    private PhotoRequestService photoRequestService;
+    PhotoRequestService photoRequestService;
 
     @MockBean
-    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @MockBean
-    private JwtProvider jwtProvider;
+    PuangUserArgumentResolver puangUserArgumentResolver;
 
     @MockBean
-    private PuangUserArgumentResolver puangUserArgumentResolver;
+    RateLimiterInterceptor rateLimiterInterceptor;
+
+    @MockBean
+    LettuceBasedProxyManager lettuceBasedProxyManager;
 
     ObjectMapper mapper = new ObjectMapper();
     String baseUrl = "/api/photo-request";
     CreateImageDto createImageDto = new CreateImageDto(
             List.of("url1", "url2", "url3", "url4", "url5", "url6"), 0, "abc@naver.com");
+
+    @BeforeEach
+    void setUp() throws Exception {
+        when(rateLimiterInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    }
 
     @DisplayName("createImage: 이미지 처리 요청을 처리하며, 성공 객체를 반환한다.")
     @Test

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gdsc.cau.puangbe.auth.external.JwtProvider;
 import gdsc.cau.puangbe.common.config.resolver.PuangUserArgumentResolver;
 import gdsc.cau.puangbe.common.exception.BaseException;
+import gdsc.cau.puangbe.common.interceptor.RateLimiterInterceptor;
 import gdsc.cau.puangbe.common.util.APIResponse;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photo.dto.request.UploadImageDto;
 import gdsc.cau.puangbe.photo.service.PhotoService;
+import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,31 +28,37 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-
 @WebMvcTest(controllers = PhotoController.class)
 class PhotoControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @MockBean
-    private PhotoService photoService;
+    PhotoService photoService;
 
     @MockBean
-    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @MockBean
-    private JwtProvider jwtProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
-    private PuangUserArgumentResolver puangUserArgumentResolver;
+    PuangUserArgumentResolver puangUserArgumentResolver;
+
+    @MockBean
+    RateLimiterInterceptor rateLimiterInterceptor;
+
+    @MockBean
+    LettuceBasedProxyManager lettuceBasedProxyManager;
 
     ObjectMapper mapper = new ObjectMapper();
     String baseUrl = "/api/photo";
     String kakaoId = "kakaoId";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        when(rateLimiterInterceptor.preHandle(any(), any(), any())).thenReturn(true);
         when(jwtProvider.getKakaoIdFromToken(anyString())).thenReturn(kakaoId);
     }
 
