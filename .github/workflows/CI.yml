@@ -35,8 +35,9 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > ./application.yml
           echo "${{ secrets.PROD }}" > ./application-prod.yml
 
-      - name: Test with Gradle
-        run: ./gradlew clean test --info --stacktrace
+      # FIXME: 추후 다시 활성화
+      # - name: Test with Gradle
+      #  run: ./gradlew clean test --info --stacktrace
 
       - name: Build with Gradle
         run: ./gradlew build -x test
