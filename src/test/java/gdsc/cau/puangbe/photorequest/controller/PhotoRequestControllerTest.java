@@ -9,6 +9,7 @@ import gdsc.cau.puangbe.common.util.APIResponse;
 import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.photorequest.dto.CreateImageDto;
 import gdsc.cau.puangbe.photorequest.service.PhotoRequestService;
+import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,9 @@ class PhotoRequestControllerTest {
 
     @MockBean
     RateLimiterInterceptor rateLimiterInterceptor;
+
+    @MockBean
+    LettuceBasedProxyManager lettuceBasedProxyManager;
 
     ObjectMapper mapper = new ObjectMapper();
     String baseUrl = "/api/photo-request";
