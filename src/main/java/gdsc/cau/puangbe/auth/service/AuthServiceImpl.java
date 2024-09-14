@@ -14,6 +14,7 @@ import gdsc.cau.puangbe.common.util.ResponseCode;
 import gdsc.cau.puangbe.user.repository.UserRepository;
 import gdsc.cau.puangbe.user.entity.User;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final String ISS = "https://kauth.kakao.com";
 
     @Override
+    @Transactional
     public LoginResponse loginWithKakao(String code) {
         // 카카오 토큰 발급
         KakaoToken kakaoToken = kakaoProvider.getTokenByCode(code);
