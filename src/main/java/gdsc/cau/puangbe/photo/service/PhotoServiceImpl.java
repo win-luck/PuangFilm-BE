@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class PhotoServiceImpl{
@@ -26,6 +25,7 @@ public class PhotoServiceImpl{
     private final PhotoRequestRepository photoRequestRepository;
     private final RedisTemplate<String, Long> redisTemplate;
 
+    @Transactional
     public EmailInfoDto uploadPhoto(Long photoRequestId, String imageUrl) {
         PhotoRequest photoRequest = photoRequestRepository.findById(photoRequestId)
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_REQUEST_NOT_FOUND));
@@ -54,6 +54,7 @@ public class PhotoServiceImpl{
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public PhotoResult getPhotoResult(Long photoRequestId){
         return photoResultRepository.findByPhotoRequestId(photoRequestId)
                 .orElseThrow(() -> new BaseException(ResponseCode.PHOTO_RESULT_NOT_FOUND));
