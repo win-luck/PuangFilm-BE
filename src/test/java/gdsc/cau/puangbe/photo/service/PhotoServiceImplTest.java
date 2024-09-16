@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class PhotoServiceImplTest {
 
     @InjectMocks
-    private PhotoServiceImpl photoService;
+    private PhotoServiceFacadeImpl photoService;
 
     @Mock
     private PhotoRequestRepository photoRequestRepository;
